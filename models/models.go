@@ -36,3 +36,7 @@ type Login struct {
 	EmailId  string `json:"emailid"`
 	Password string `json:"password"`
 }
+
+type Res struct {
+	Name string `json:"name"`
+}

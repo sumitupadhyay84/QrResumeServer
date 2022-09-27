@@ -140,10 +140,24 @@ func GetResumes(c *gin.Context) {
 
 }
 
-func DeleteResume(c *gin.Context) {
-	if err := c.ShouldBindHeader(&head{}); err != nil {
-		c.JSON(http.StatusOK, err)
+func CreateResume(c *gin.Context) {
+
+	name := c.Param("name")
+	cookie, err := c.Request.Cookie("token")
+	if err != nil {
+		c.JSON(http.StatusAccepted, gin.H{"code": 204})
 	}
+	fmt.Printf("Cookie value: %v", cookie.Value)
+
+	hmacSecret := []byte("secretkeyqrresume")
+	token, _ := jwt.Parse(cookie.Value, func(token *jwt.Token) (interface{}, error) {
+		// check token signing method etc
+		return hmacSecret, nil
+	})
+	fmt.Println(token)
+	db := database.CreateDbConn()
+	db.Create(&models.Resume{Name: name})
+	c.JSON(http.StatusAccepted, gin.H{"code": 200})
 
 }
 
